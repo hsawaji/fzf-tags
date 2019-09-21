@@ -5,7 +5,7 @@ let s:actions = {
   \ 'ctrl-x': 'split',
   \ 'ctrl-v': 'vsplit' }
 
-function! fzf_tags#Find(identifier)
+function! fzf_tags#Find(identifier, opts)
   let identifier = s:strip_leading_bangs(a:identifier)
   let source_lines = s:source_lines(identifier)
 
@@ -17,12 +17,12 @@ function! fzf_tags#Find(identifier)
     execute 'tag' identifier
   else
     let expect_keys = join(keys(s:actions), ',')
-    call fzf#run({
+    call fzf#run(extend({
     \   'source': source_lines,
     \   'sink*':   function('s:sink', [identifier]),
     \   'options': '--expect=' . expect_keys . ' --ansi --no-sort --tiebreak index --prompt " 🔎 \"' . identifier . '\" > "',
     \   'down': '40%',
-    \ })
+    \ }, a:opts))
   endif
 endfunction
 
